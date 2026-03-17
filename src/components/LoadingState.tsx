@@ -3,8 +3,8 @@
 const steps = [
   "Fetching your homepage...",
   "Extracting copy and structure...",
-  "Analyzing messaging clarity...",
-  "Evaluating persuasion & credibility...",
+  "Evaluating consumer insight...",
+  "Analyzing the 5 ways to sharpen...",
   "Generating recommendations...",
 ];
 

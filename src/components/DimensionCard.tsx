@@ -1,6 +1,6 @@
 "use client";
 
-import { DimensionScore } from "@/lib/types";
+import { DimensionScore, DIMENSION_LABELS, DIMENSION_DESCRIPTIONS } from "@/lib/types";
 
 interface DimensionCardProps {
   name: string;
@@ -14,21 +14,42 @@ function getScoreColor(score: number): string {
   return "text-red-600 bg-red-50 border-red-200";
 }
 
+function getPriorityBadge(name: string): string | null {
+  const priorities: Record<string, string> = {
+    uniqueness: "Highest Priority",
+    addressable_need: "High Priority",
+    dominate_situation: "Medium Priority",
+    reason_to_believe: "Lower Priority",
+    quantifiable_support: "Lower Priority",
+  };
+  return priorities[name] || null;
+}
+
 export default function DimensionCard({ name, data }: DimensionCardProps) {
   const colorClasses = getScoreColor(data.score);
+  const label = DIMENSION_LABELS[name] || name;
+  const description = DIMENSION_DESCRIPTIONS[name];
+  const priority = getPriorityBadge(name);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold capitalize text-gray-900">
-          {name}
-        </h3>
+      <div className="mb-3 flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">{label}</h3>
+          {priority && (
+            <span className="text-xs font-medium text-indigo-500">{priority}</span>
+          )}
+        </div>
         <span
           className={`rounded-full border px-3 py-1 text-sm font-bold ${colorClasses}`}
         >
           {data.score}/10
         </span>
       </div>
+
+      {description && (
+        <p className="mb-3 text-xs text-gray-400 italic">{description}</p>
+      )}
 
       <p className="mb-4 text-sm text-gray-600">{data.summary}</p>
 

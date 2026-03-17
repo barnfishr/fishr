@@ -8,7 +8,7 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from "recharts";
-import { AnalysisResult } from "@/lib/types";
+import { AnalysisResult, DIMENSION_LABELS } from "@/lib/types";
 
 interface RadarChartProps {
   dimensions: AnalysisResult["dimensions"];
@@ -16,7 +16,7 @@ interface RadarChartProps {
 
 export default function RadarChart({ dimensions }: RadarChartProps) {
   const data = Object.entries(dimensions).map(([key, value]) => ({
-    dimension: key.charAt(0).toUpperCase() + key.slice(1),
+    dimension: DIMENSION_LABELS[key] || key,
     score: value.score,
     fullMark: 10,
   }));
@@ -25,7 +25,7 @@ export default function RadarChart({ dimensions }: RadarChartProps) {
     <ResponsiveContainer width="100%" height={300}>
       <RechartsRadarChart data={data}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12 }} />
+        <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11 }} />
         <PolarRadiusAxis angle={90} domain={[0, 10]} tick={{ fontSize: 10 }} />
         <Radar
           dataKey="score"

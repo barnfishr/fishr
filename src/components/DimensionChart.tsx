@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { AnalysisResult } from "@/lib/types";
+import { AnalysisResult, DIMENSION_LABELS } from "@/lib/types";
 
 interface DimensionChartProps {
   dimensions: AnalysisResult["dimensions"];
@@ -25,16 +25,16 @@ function getBarColor(score: number): string {
 
 export default function DimensionChart({ dimensions }: DimensionChartProps) {
   const data = Object.entries(dimensions).map(([key, value]) => ({
-    name: key.charAt(0).toUpperCase() + key.slice(1),
+    name: DIMENSION_LABELS[key] || key,
     score: value.score,
   }));
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
+      <BarChart data={data} layout="vertical" margin={{ left: 40 }}>
         <CartesianGrid strokeDasharray="3 3" horizontal={false} />
         <XAxis type="number" domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} />
-        <YAxis type="category" dataKey="name" width={110} />
+        <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 12 }} />
         <Tooltip
           formatter={(value) => [`${value}/10`, "Score"]}
           contentStyle={{

@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { AnalysisResult } from "./types";
+import { AnalysisResult, DIMENSION_LABELS } from "./types";
 
 export function generatePDF(url: string, analysis: AnalysisResult): jsPDF {
   const doc = new jsPDF();
@@ -13,7 +13,7 @@ export function generatePDF(url: string, analysis: AnalysisResult): jsPDF {
 
   doc.setFontSize(12);
   doc.setTextColor(100, 100, 100);
-  doc.text("Homepage Copy Analysis Report", 20, 33);
+  doc.text("Competitive Angle Analysis Report", 20, 33);
 
   // URL and date
   doc.setFontSize(10);
@@ -35,35 +35,77 @@ export function generatePDF(url: string, analysis: AnalysisResult): jsPDF {
   doc.setFontSize(14);
   doc.text("/100", pageWidth / 2 + 25, 68);
 
-  // Dimension scores table
+  // Consumer Insight
   doc.setFontSize(16);
   doc.setTextColor(0, 0, 0);
-  doc.text("Dimension Scores", 20, 85);
+  doc.text("Consumer Insight", 20, 85);
+
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  const insightLines = doc.splitTextToSize(
+    analysis.consumer_insight.overall_summary,
+    pageWidth - 40
+  );
+  doc.text(insightLines, 20, 93);
+
+  const insightItems = [
+    ["Lifts Over Hurdle", analysis.consumer_insight.lifts_over_hurdle],
+    ["Unique or Different", analysis.consumer_insight.unique_or_different],
+    ["Personal Connection", analysis.consumer_insight.personal_connection],
+  ] as const;
+
+  const insightRows = insightItems.map(([label, data]) => [
+    label,
+    `${data.score}/10`,
+    data.summary,
+  ]);
+
+  autoTable(doc, {
+    startY: 93 + insightLines.length * 5 + 3,
+    head: [["Criteria", "Score", "Assessment"]],
+    body: insightRows,
+    styles: { fontSize: 9, cellPadding: 4 },
+    headStyles: { fillColor: [99, 102, 241] },
+    columnStyles: {
+      0: { cellWidth: 40 },
+      1: { cellWidth: 20, halign: "center" },
+      2: { cellWidth: "auto" },
+    },
+  });
+
+  let yPos = (doc as jsPDF & { lastAutoTable?: { finalY: number } })
+    .lastAutoTable?.finalY ?? 140;
+
+  // Dimension scores table
+  yPos += 10;
+  doc.setFontSize(16);
+  doc.setTextColor(0, 0, 0);
+  doc.text("5 Ways to Sharpen", 20, yPos);
 
   const dimensionRows = Object.entries(analysis.dimensions).map(
     ([name, dim]) => [
-      name.charAt(0).toUpperCase() + name.slice(1),
+      DIMENSION_LABELS[name] || name,
       `${dim.score}/10`,
       dim.summary,
     ]
   );
 
   autoTable(doc, {
-    startY: 90,
+    startY: yPos + 5,
     head: [["Dimension", "Score", "Summary"]],
     body: dimensionRows,
     styles: { fontSize: 9, cellPadding: 4 },
     headStyles: { fillColor: [99, 102, 241] },
     columnStyles: {
-      0: { cellWidth: 35 },
+      0: { cellWidth: 45 },
       1: { cellWidth: 20, halign: "center" },
       2: { cellWidth: "auto" },
     },
   });
 
   // Detailed breakdowns
-  let yPos = (doc as jsPDF & { lastAutoTable?: { finalY: number } })
-    .lastAutoTable?.finalY ?? 150;
+  yPos = (doc as jsPDF & { lastAutoTable?: { finalY: number } })
+    .lastAutoTable?.finalY ?? 200;
 
   Object.entries(analysis.dimensions).forEach(([name, dim]) => {
     if (yPos > 240) {
@@ -75,7 +117,7 @@ export function generatePDF(url: string, analysis: AnalysisResult): jsPDF {
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
     doc.text(
-      `${name.charAt(0).toUpperCase() + name.slice(1)} (${dim.score}/10)`,
+      `${DIMENSION_LABELS[name] || name} (${dim.score}/10)`,
       20,
       yPos
     );
@@ -127,7 +169,7 @@ export function generatePDF(url: string, analysis: AnalysisResult): jsPDF {
   yPos += 10;
   doc.setFontSize(16);
   doc.setTextColor(0, 0, 0);
-  doc.text("Top Actions", 20, yPos);
+  doc.text("Top Actions to Sharpen Your Angle", 20, yPos);
   yPos += 8;
 
   doc.setFontSize(10);

@@ -120,14 +120,14 @@ export default function Home() {
           <div className="flex min-h-[60vh] flex-col items-center justify-center gap-8">
             <div className="text-center">
               <h1 className="mb-3 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-                Fix your homepage messaging
+                Sharpen your competitive angle
                 <br />
                 <span className="text-indigo-600">in minutes</span>
               </h1>
               <p className="mx-auto max-w-lg text-lg text-gray-600">
-                Get a detailed diagnostic of your homepage copy with specific,
-                actionable recommendations to improve clarity, persuasion, and
-                conversions.
+                Analyze your homepage copy against proven best practices for
+                sharpening your competitive angle — from uniqueness to
+                quantifiable support.
               </p>
             </div>
 
